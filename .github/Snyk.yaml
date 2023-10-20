@@ -1,22 +1,18 @@
 name: Snyk Scan
-
 on:
-  workflow_dispatch: {}
-
-permissions:
-  contents: read
-
+  workflow_dispatch:
+  push:
+    branches: [ develop ]
 jobs:
-  snyk:
-  name: snyk security scan
-    permissions:
-      contents: read 
-      security-events: write  
-      actions: read 
+  security:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Snyk CLI to check for security issues
-        uses: snyk/actions/setup@806182742461562b67788a64410098c9d9b96adb
-
-        
+       - uses: actions/checkout@v2 
+       - uses: actions/setup-node@v2
+         with:
+          node-version: '14'
+       - run: npm install   
+       - run: npm install snyk -g # install snyk
+       - run: snyk -v
+       - run: snyk auth ${{ secrets.snyk_token }} # snyk authentication using GH secrets
+       - run: snyk monitor
