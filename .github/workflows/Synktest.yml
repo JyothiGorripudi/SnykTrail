@@ -1,0 +1,18 @@
+name: Snyk Scan
+on:
+  workflow_dispatch:
+  push:
+    branches: [ develop ]
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+       - uses: actions/checkout@v2 
+       - uses: actions/setup-node@v2
+         with:
+          node-version: '14'
+       - run: npm install   
+       - run: npm install snyk -g # install snyk
+       - run: snyk -v
+       - run: snyk auth ${{ secrets.snyk_token }} # snyk authentication using GH secrets
+       - run: snyk monitor
